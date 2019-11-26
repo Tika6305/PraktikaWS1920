@@ -40,6 +40,8 @@ f = 0: f_delta: f_delta*(N-1);
 %Plotte Signal in Zeitbereich
 displayTimeDomain(t,kanal1,kanal2);
 [kanal1_cut, kanal2_cut, t_cut] = cutSignals(kanal1, kanal2,fs,t);
+% Darstellunng des gekürzten Signal
+displayTimeDomain(t_cut,kanal1_cut,kanal2_cut);
 
 %% Filterung
 
@@ -54,8 +56,8 @@ h  = fdesign.bandpass('N,F3dB1,F3dB2', N_butter, Fu, Fo, fs);
 %Filter designen und Transferfunktion berechnen
 [b, a] = tf(design(h, 'butter')); 
 %Signal filtern (0-Phasen-Filterung)
-kanal1 = filtfilt(b,a,kanal1); 
-kanal2 = filtfilt(b,a,kanal2); 
+kanal1_cut = filtfilt(b,a,kanal1_cut); 
+kanal2_cut = filtfilt(b,a,kanal2_cut); 
 
 %Lösche die übrigen Variablen
 clearvars h b a Fu Fo N_butter
@@ -68,22 +70,11 @@ clearvars h b a Fu Fo N_butter
 
 %Plotte Leistungsspektrum
 f_end = 700; %Bis zu dieser Frequenz geht der Plot
-[kanal1_power_ein, kanal2_power_ein] = calcAndDisplayPowerspectrum(f,fs,kanal1,kanal2,f_end);
-
 %Lösche die übrigen Variablen
 clearvars f_delta N
 
-%% Bestimmung der Amplituden und MVC
-
-[mvc_k1, mvc_k2]= amplitude(kanal1, kanal2);
-% Darstellunng der Amplituden
-displayTimeDomain(t,abs(kanal1),abs(kanal2));
-
 % Bestimmung Amplitudenparameter
 % Verkürzen auf das Nutzsignal
-
-displayTimeDomain(t_cut,kanal1_cut,kanal2_cut);
-
 [mvc_k1_cut, mvc_k2_cut]= amplitude(kanal1_cut, kanal2_cut);
 amp_values = calcAmpValues( kanal1_cut, kanal2_cut, mvc_k1_cut, mvc_k2_cut );
 

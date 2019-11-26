@@ -7,7 +7,7 @@ dims = [1 45];
 dlgtitle = 'Userabfrage';
 %Was sind die default Werte?
 totalSignalLength = size(kanal1);
-totalSignalLength_sec = floor(totalSignalLength(1)/fs);
+totalSignalLength_sec = totalSignalLength(1)/fs;
 definput = {'ignored','0',num2str(totalSignalLength_sec)};
 %Speichere die Antwort als inform
 inform = inputdlg(prompt,dlgtitle,dims,definput);
