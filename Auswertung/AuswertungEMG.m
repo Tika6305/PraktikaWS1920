@@ -31,6 +31,7 @@ clearvars filename foldername
 
 %% Darstellung
 fs = 2048;          % Samplingfrequenz
+f_end = 700; %Bis zu dieser Frequenz geht der Plot
 %Berechne Zeitachse
 N  = length(kanal1);
 t  = 0: 1/fs: (N-1)/fs;
@@ -39,7 +40,13 @@ f_delta = fs/N;
 f = 0: f_delta: f_delta*(N-1); 
 %Plotte Signal in Zeitbereich
 displayTimeDomain(t,kanal1,kanal2);
+[kanal1_power_ein, kanal2_power_ein] = calcAndDisplayPowerspectrum(f,fs,kanal1,kanal2,f_end);
+
 [kanal1_cut, kanal2_cut, t_cut] = cutSignals(kanal1, kanal2,fs,t);
+N_cut = length(t_cut);
+f_delta_cut = fs/N_cut;
+f_cut = 0: f_delta_cut: f_delta_cut*(N_cut-1); 
+
 % Darstellunng des gekürzten Signal
 displayTimeDomain(t_cut,kanal1_cut,kanal2_cut);
 
@@ -55,6 +62,8 @@ Fo = 701;           % Obere Cutofffrequenz
 h  = fdesign.bandpass('N,F3dB1,F3dB2', N_butter, Fu, Fo, fs);
 %Filter designen und Transferfunktion berechnen
 [b, a] = tf(design(h, 'butter')); 
+
+
 %Signal filtern (0-Phasen-Filterung)
 kanal1_cut = filtfilt(b,a,kanal1_cut); 
 kanal2_cut = filtfilt(b,a,kanal2_cut); 
@@ -69,7 +78,7 @@ clearvars h b a Fu Fo N_butter
 
 
 %Plotte Leistungsspektrum
-f_end = 700; %Bis zu dieser Frequenz geht der Plot
+
 %Lösche die übrigen Variablen
 clearvars f_delta N
 
@@ -79,8 +88,8 @@ clearvars f_delta N
 amp_values = calcAmpValues( kanal1_cut, kanal2_cut, mvc_k1_cut, mvc_k2_cut );
 
 % Bestimmung Frequenzparameter
-[kanal1_power_ein_cut, kanal2_power_ein_cut] = calcAndDisplayPowerspectrum(f,fs,kanal1_cut,kanal2_cut,f_end);
-freq_values = calcFreqValues( kanal1_power_ein_cut, kanal2_power_ein_cut,f );
+[kanal1_power_ein_cut, kanal2_power_ein_cut] = calcAndDisplayPowerspectrum(f_cut,fs,kanal1_cut,kanal2_cut,f_end);
+freq_values = calcFreqValues( kanal1_power_ein_cut, kanal2_power_ein_cut,f_cut );
 
 % See how Energy and Voltage changes with time useful for Task No. 4
 [quantiles, totalEnergy_deltaT] = displaySTFT(fs,kanal1_cut,kanal2_cut,Aufgabe);
